@@ -17,10 +17,9 @@ const gradeController = require('./controllers/gradeController');
 
 const app = express();
 app.use(cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Ajout explicite des méthodes
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
 // Clé secrète pour JWT - visible ici, à déplacer dans .env une fois que ça marche
 const JWT_SECRET = "d6d547ac2280a7170d46d15b5255281edf65325d12c30665f2c27f93b1b13faedbe4e7d1bc66ea00b1f85e2308aa6c1c38d713c665fc861df6e299b25cf82da1";  // À mettre dans .env en production
