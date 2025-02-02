@@ -1,6 +1,6 @@
 // controllers/courseController.js
 const Course = require('../model/Course');
-const Student = require('../model/students');
+const Student = require('../model/Students');
 
 exports.getAll = async (req, res) => {
     try {
