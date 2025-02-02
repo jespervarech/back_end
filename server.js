@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config();  // Load environment variables from the .env file
 const User = require('./model/User');
 //const Student = require('./model/Student');
 const jwt = require('jsonwebtoken');
@@ -16,14 +16,17 @@ const courseController = require('./controllers/courseController');
 const gradeController = require('./controllers/gradeController');
 
 const app = express();
-app.use(cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-}));
-// Clé secrète pour JWT - visible ici, à déplacer dans .env une fois que ça marche
-const JWT_SECRET = "d6d547ac2280a7170d46d15b5255281edf65325d12c30665f2c27f93b1b13faedbe4e7d1bc66ea00b1f85e2308aa6c1c38d713c665fc861df6e299b25cf82da1";  // À mettre dans .env en production
 
+
+app.use(cors({
+    origin: process.env.FRONTEND_URL,  // CORS autorise uniquement l'URL de votre frontend
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true  // Autorise l'envoi de cookies et d'informations d'identification
+}));
+
+// Clé secrète pour JWT - visible ici, à déplacer dans .env une fois que ça marche
+const JWT_SECRET = process.env.JWT_SECRET;
 // Fonction pour créer un JWT
 const createToken = (user) => {
     return jwt.sign(
@@ -55,9 +58,9 @@ app.use(passport.session());
 
 // Stratégie Google OAuth avec Passport
 passport.use(new GoogleStrategy({
-    clientID: "437766875771-ocsr5v4rhtfkevql5q66u8if7r71jq5m.apps.googleusercontent.com", // À déplacer dans .env
-    clientSecret: "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",  // À déplacer dans .env
-    callbackURL: "http://localhost:8010/auth/google/callback"
+    clientID: process.env.GOOGLE_CLIENT_ID, // À déplacer dans .env
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,  // À déplacer dans .env
+    callbackURL: `${process.env.BASE_URL}/auth/google/callback`
 }, async (accessToken, refreshToken, profile, done) => {
     try {
         // Vérifier si l'utilisateur existe déjà dans la table User
@@ -150,14 +153,14 @@ app.get("/auth/google/callback",
             const encodedToken = Buffer.from(token).toString('base64');
             const encodedUser = Buffer.from(JSON.stringify(userInfo)).toString('base64');
 
-            res.redirect(`http://localhost:5173/admin/?token=${encodedToken}&user=${encodedUser}`);
+            res.redirect(`${process.env.FRONTEND_URL}/admin/?token=${encodedToken}&user=${encodedUser}`);
         } catch (error) {
             // Afficher l'erreur dans la console pour le débogage
             console.error("Error during authentication callback:", error);
 
             // Ajouter l'erreur dans la redirection pour plus d'informations
             const errorMessage = encodeURIComponent(error.message || "Unknown error");
-            res.redirect(`http://localhost:5173/login?error=${errorMessage}`);
+            res.redirect(`${process.env.FRONTEND_URL}/login?error=${errorMessage}`);
         }
     }
 );
