@@ -1,6 +1,6 @@
 // controllers/statsController.js
 const User = require('../model/User');
-const Student = require('../model/students');
+const Student = require('../model/Students');
 const Course = require('../model/Course');
 const Grade = require('../model/Grades');
 const studentController = require('./studentController');
